@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Wiki Wordpress Admin Menu Hide
+Plugin Name: Wiki WordPress Admin Menu Hide
 Description: Hides or shows specific admin menu items and hides admin notices for chosen user roles. Includes a settings page to configure the plugin.
 Version: 1.9
 Author: Arnel Go
@@ -8,6 +8,14 @@ Author: Arnel Go
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
+}
+
+// Enqueue the admin script
+add_action('admin_enqueue_scripts', 'camh_enqueue_admin_scripts');
+function camh_enqueue_admin_scripts()
+{
+    wp_enqueue_script('camh-admin-js', plugin_dir_url(__FILE__) . 'js/camh-admin.js', array('jquery'), '1.0', true);
+    wp_localize_script('camh-admin-js', 'camh_ajax', array('ajaxurl' => admin_url('admin-ajax.php'), 'nonce' => wp_create_nonce('camh-nonce')));
 }
 
 // Hook to add admin menu
@@ -68,74 +76,6 @@ function camh_settings_page()
             <?php submit_button(); ?>
         </form>
     </div>
-    <script>
-        document.getElementById('camh-selected-role').addEventListener('change', function() {
-            fetchSettingsForRole(this.value);
-        });
-
-        document.getElementById('camh-settings-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveSettings();
-        });
-
-        function fetchSettingsForRole(role) {
-            var data = {
-                'action': 'camh_get_role_settings',
-                'role': role,
-                'security': '<?php echo wp_create_nonce("camh-nonce"); ?>'
-            };
-
-            jQuery.post(ajaxurl, data, function(response) {
-                if (response.success) {
-                    updateSettingsForm(response.data);
-                } else {
-                    console.error('Failed to fetch settings:', response.data);
-                }
-            }).fail(function(xhr, textStatus, errorThrown) {
-                console.error('AJAX error:', textStatus, errorThrown);
-            });
-        }
-
-        function updateSettingsForm(settings) {
-            var checkboxes = document.querySelectorAll('input[name="camh_hidden_menus[]"]');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = settings.hidden_menus.includes(checkbox.value);
-            });
-
-            document.querySelector('input[name="camh_show_mode"][value="hide"]').checked = (settings.show_mode === 'hide');
-            document.querySelector('input[name="camh_show_mode"][value="show"]').checked = (settings.show_mode === 'show');
-
-            document.querySelector('input[name="camh_hide_admin_notices"]').checked = (settings.hide_admin_notices === '1');
-        }
-
-        function saveSettings() {
-            var formData = new FormData(document.getElementById('camh-settings-form'));
-
-            jQuery.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.success) {
-                        alert('Settings saved successfully.');
-                    } else {
-                        alert('Failed to save settings.');
-                    }
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.error('AJAX error:', textStatus, errorThrown);
-                }
-            });
-        }
-
-        // Fetch settings for the initially selected role on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            var selectedRole = document.getElementById('camh-selected-role').value;
-            fetchSettingsForRole(selectedRole);
-        });
-    </script>
 <?php
 }
 
@@ -249,17 +189,6 @@ function camh_hidden_menus_field_callback()
         }
     }
     echo '</ul>';
-
-    echo '<script>
-        document.getElementById("camh-menu-search").addEventListener("input", function() {
-            var filter = this.value.toLowerCase();
-            var menuItems = document.querySelectorAll("#camh-menu-items li");
-            menuItems.forEach(function(item) {
-                var text = item.textContent.toLowerCase();
-                item.style.display = text.includes(filter) ? "" : "none";
-            });
-        });
-    </script>';
 }
 
 ?>
