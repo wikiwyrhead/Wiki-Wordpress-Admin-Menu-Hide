@@ -1,11 +1,15 @@
 <?php
 /*
-Plugin Name: Wiki WordPress Admin Menu Hide
-Plugin URI: https://github.com/wikiwyrhead/Wiki-Wordpress-Admin-Menu-Hide
-Description: Hides or shows specific admin menu items and hides admin notices for chosen user roles. Includes a settings page to configure the plugin.
-Version: 1.9
-Author: Arnel Go
-*/
+ * Plugin Name: Wiki WordPress Admin Menu Hide
+ * Plugin URI: https://github.com/wikiwyrhead/Wiki-Wordpress-Admin-Menu-Hide
+ * Description: Hides or shows specific admin menu items and hides admin notices for chosen user roles. Includes a settings page to configure the plugin.
+ * Version: 1.9
+ * Author: Arnel Go
+ * Author URI: https://arnelgo.info/
+ * License: GPLv2 or later
+ * Text Domain: wp-admin-menu-hide
+ */
+
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
