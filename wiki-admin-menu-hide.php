@@ -5,7 +5,7 @@
  * Description: Hides or shows specific admin menu items and hides admin notices for chosen user roles. Includes a settings page to configure the plugin.
  * Version: 2.0
  * Author: Arnel Go
- * Author URI: https://arnelgo.info/
+ * Author URI: https://arnelbg.com/
  * License: GPLv2 or later
  * Text Domain: wp-admin-menu-hide
  */
